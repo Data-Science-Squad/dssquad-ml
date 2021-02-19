@@ -2,6 +2,10 @@
 
 This repo is the source of the DS-Squad machine learning model. 
 
+# Wiki
+
+
+
 # Contributing to the repository
 
 ### Clone the repository
