@@ -4,7 +4,7 @@ This repo is the source of the DS-Squad machine learning model.
 
 # Wiki
 
-
+https://github.com/Data-Science-Squad/dssquad-ml/wiki
 
 # Contributing to the repository
 
