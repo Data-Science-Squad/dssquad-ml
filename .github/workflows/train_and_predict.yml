@@ -1,0 +1,34 @@
+name: Retrain Model
+
+on:
+  push:
+    branches: [dm_example_github_actions]
+
+jobs:
+  compare-experiments:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7]
+    env:
+      NEPTUNE_API_TOKEN: ${{ secrets.NEPTUNE_API_TOKEN }}
+      NEPTUNE_PROJECT_DEV: ${{ secrets.NEPTUNE_PROJECT_DEV }}
+
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Checkout dm_example_github_actions branch
+        uses: actions/checkout@v2
+        with:
+          ref: dm_example_github_actionsevelop
+
+      - name: Setup develop branch environment and run experiment
+        id: experiment_main
+        run: |
+          pip install -r requirements.txt
+          export NEPTUNE_EXPERIMENT_TAG_ID=$(uuidgen)
+          python train.py
+          echo ::set-output name=experiment_tag_id::$NEPTUNE_EXPERIMENT_TAG_ID
