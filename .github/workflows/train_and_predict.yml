@@ -23,7 +23,7 @@ jobs:
       - name: Checkout dm_example_github_actions branch
         uses: actions/checkout@v2
         with:
-          ref: dm_example_github_actionsevelop
+          ref: dm_example_github_actions
 
       - name: Setup develop branch environment and run experiment
         id: experiment_main
