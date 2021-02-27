@@ -13,6 +13,9 @@ jobs:
     env:
       NEPTUNE_API_TOKEN: ${{ secrets.NEPTUNE_API_TOKEN }}
       NEPTUNE_PROJECT_DEV: ${{ secrets.NEPTUNE_PROJECT_DEV }}
+      CASKEY5_USERNAME: ${{ secrets.CASKEY5_USERNAME }}
+      CASKEY5_PASSWORD: ${{ secrets.CASKEY5_PASSWORD }}
+      CASKEY5_HOST: ${{ secrets.CASKEY5_HOST }}
 
     steps:
       - name: Set up Python
@@ -30,5 +33,5 @@ jobs:
         run: |
           pip install -r requirements.txt
           export NEPTUNE_EXPERIMENT_TAG_ID=$(uuidgen)
-          python train.py
+          python db_conn.py
           echo ::set-output name=experiment_tag_id::$NEPTUNE_EXPERIMENT_TAG_ID
