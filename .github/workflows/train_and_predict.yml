@@ -28,7 +28,7 @@ jobs:
         with:
           ref: dm_example_github_actions
 
-      - name: Setup develop branch environment and run experiment
+      - name: Install requirements and run model script
         id: experiment_main
         run: |
           pip install -r requirements.txt

@@ -1,9 +1,9 @@
-# dssquad-ml
+## Guide for productionizing the ML model
 
-**ML Engineers:** [Nisrine Hammout](https://www.linkedin.com/in/nisrine-hammout-858649106/?originalSubdomain=ma), [Gayatri Dobhal](https://www.linkedin.com/in/gayatri-dobhal-8a0637156/?originalSubdomain=in)
+This branch contains examples of the essential files and file structure needed to deploy the ML model into production.
 
-This repo is the source of the DS-Squad machine learning model. 
+`train.py` - The file reads data, trains the model, logs model metrics, and makes predictions. Adapt this file to our project as needed.
 
-# Contributing to the repository
+`requirements.txt` - Python libraries and their versions needed to run the `train.py` script
 
-Visit the [Project Wiki](https://dssquad-wiki.netlify.app/) to learn about contributing.
+`.github/workflows/train_and_predict.yml` - The GitHub Actions configuration file that instructs GitHub to install Python 3.7, install the libraries in `requirements.txt`, and run `train.py`. This sequence of steps runs whenever there is a push to this feature branch, however for production the main branch should be used instead. Customize this script by changing lines 5, 26, and 29.
