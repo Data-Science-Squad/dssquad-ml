@@ -33,5 +33,5 @@ jobs:
         run: |
           pip install -r requirements.txt
           export NEPTUNE_EXPERIMENT_TAG_ID=$(uuidgen)
-          python db_conn.py
+          python train.py
           echo ::set-output name=experiment_tag_id::$NEPTUNE_EXPERIMENT_TAG_ID
