@@ -11,14 +11,14 @@ library(furrr)
 ## Database query ##
 ####################
 
-source("creds.R")
+creds <- readLines("C:/Users/Owner/Documents/data-science-projects/ds-squad/creds.txt")
 
 conn <- dbConnect(
   MySQL(), 
-  user=Sys.getenv("CASKEY5_USERNAME"), 
-  password=Sys.getenv("CASKEY5_PASSWORD"), 
+  user=creds[1], 
+  password=creds[2], 
   dbname='caskey5_buffaloCrime', 
-  host=Sys.getenv("CASKEY5_HOST")
+  host=creds[3]
 )
 
 base_query <- tbl(conn, "full_incidents") %>%
