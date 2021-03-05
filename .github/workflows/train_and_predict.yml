@@ -1,8 +1,6 @@
 name: Retrain Model
 
-on:
-  push:
-    branches: [dm_example_github_actions]
+on: [repository_dispatch]
 
 jobs:
   compare-experiments:
@@ -18,6 +16,9 @@ jobs:
       CASKEY5_HOST: ${{ secrets.CASKEY5_HOST }}
 
     steps:
+      - name: Event Information
+        run: |
+          echo "Event '${{ github.event.action }}' received from '${{ github.event.client_payload.repository }}'"
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
