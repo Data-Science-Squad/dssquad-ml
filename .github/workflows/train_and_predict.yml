@@ -1,6 +1,6 @@
 name: Retrain Model
 
-on: [repository_dispatch]
+on: [workflow_dispatch]
 
 jobs:
   compare-experiments:
@@ -19,6 +19,7 @@ jobs:
       - name: Event Information
         run: |
           echo "Event '${{ github.event.action }}' received from '${{ github.event.client_payload.repository }}'"
+          
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
