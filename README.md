@@ -6,4 +6,4 @@ This branch contains examples of the essential files and file structure needed t
 
 `requirements.txt` - Python libraries and their versions needed to run the `train.py` script
 
-`.github/workflows/train_and_predict.yml` - The GitHub Actions configuration file that instructs GitHub to install Python 3.7, install the libraries in `requirements.txt`, and run `train.py`. This sequence of steps runs whenever there is a push to this feature branch, however for production the main branch should be used instead. Customize this script by changing lines 5, 26, and 29.
+`.github/workflows/train_and_predict.yml` - The GitHub Actions configuration file that instructs GitHub to set up a virtual environment with Python 3.7, install the libraries in `requirements.txt`, and run `train.py`. This "workflow" runs automatically whenever there is a `workflow_dispatch` event type or a `push` event type sent to this branch. In production, the `main` branch should be used along with a `workflow_dispatch` event. 

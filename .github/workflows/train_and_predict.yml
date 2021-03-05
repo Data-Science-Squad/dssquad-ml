@@ -1,35 +1,49 @@
+# name of the "workflow"
 name: Retrain Model
 
-on:
+# event types that will trigger the workflow
+# triggers include 1) workflow_dispatch and 2) push to specific branch
+on: 
+  workflow_dispatch:
   push:
-    branches: [dm_example_github_actions]
+    branches:
+      - dm_example_github_actions
 
+# define the jobs to run
 jobs:
-  compare-experiments:
+  # job name run-model
+  run-model:
+    # OS used in virtual envionrment
     runs-on: ubuntu-latest
+    # python version
     strategy:
       matrix:
         python-version: [3.7]
+    # environment variables
+    # these must be set up in GitHub --> Secrets
     env:
       NEPTUNE_API_TOKEN: ${{ secrets.NEPTUNE_API_TOKEN }}
       NEPTUNE_PROJECT_DEV: ${{ secrets.NEPTUNE_PROJECT_DEV }}
       CASKEY5_USERNAME: ${{ secrets.CASKEY5_USERNAME }}
       CASKEY5_PASSWORD: ${{ secrets.CASKEY5_PASSWORD }}
       CASKEY5_HOST: ${{ secrets.CASKEY5_HOST }}
-
+    
+    # steps to run in this job
     steps:
+        # install Python
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
-
+        
+        # checkout the dm_example_github_actions branch code
       - name: Checkout dm_example_github_actions branch
         uses: actions/checkout@v2
         with:
           ref: dm_example_github_actions
-
+          
+        # install libraries, configure Neptune, and run train.py script
       - name: Install requirements and run model script
-        id: experiment_main
         run: |
           pip install -r requirements.txt
           export NEPTUNE_EXPERIMENT_TAG_ID=$(uuidgen)
