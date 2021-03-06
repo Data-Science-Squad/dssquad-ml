@@ -22,19 +22,16 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Checkout dm_example_github_actions branch
+      - name: Checkout branch
         uses: actions/checkout@v2
         with:
-          ref: dm_example_github_actions
+          ref: dm-test-dispatch
 
       - name: Install requirements and run model script
         id: experiment_main
         run: |
-          pip install -r requirements.txt
-          export NEPTUNE_EXPERIMENT_TAG_ID=$(uuidgen)
           python train.py
-          echo ::set-output name=experiment_tag_id::$NEPTUNE_EXPERIMENT_TAG_ID
-          
+
       - name: Invoke workflow in dssquad-app
         uses: benc-uk/workflow-dispatch@v1
         with:
