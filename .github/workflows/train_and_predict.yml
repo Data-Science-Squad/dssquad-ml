@@ -38,7 +38,7 @@ jobs:
       - name: Invoke workflow in dssquad-app
         uses: benc-uk/workflow-dispatch@v1
         with:
-          workflow: Retrain Model
-          repo: Data-Science-Squad/dssquad-ml
+          workflow: Deploy app
+          repo: Data-Science-Squad/dssquad-app
           token: ${{ secrets.ACCESS_TOKEN }}
           ref: dm-test
