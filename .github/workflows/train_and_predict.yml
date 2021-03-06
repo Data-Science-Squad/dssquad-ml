@@ -16,9 +16,6 @@ jobs:
       CASKEY5_HOST: ${{ secrets.CASKEY5_HOST }}
 
     steps:
-      - name: Event Information
-        run: |
-          echo "Event '${{ github.event.action }}' received from '${{ github.event.client_payload.repository }}'"
           
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -37,3 +34,11 @@ jobs:
           export NEPTUNE_EXPERIMENT_TAG_ID=$(uuidgen)
           python train.py
           echo ::set-output name=experiment_tag_id::$NEPTUNE_EXPERIMENT_TAG_ID
+          
+      - name: Invoke workflow in dssquad-app
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: Retrain Model
+          repo: Data-Science-Squad/dssquad-ml
+          token: ${{ secrets.ACCESS_TOKEN }}
+          ref: dm-test
