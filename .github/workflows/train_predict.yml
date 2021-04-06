@@ -1,0 +1,41 @@
+name: Retrain Model
+
+on: [workflow_dispatch]
+
+jobs:
+  compare-experiments:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7]
+    env:
+      NEPTUNE_API_TOKEN: ${{ secrets.NEPTUNE_API_TOKEN }}
+      NEPTUNE_PROJECT_DEV: ${{ secrets.NEPTUNE_PROJECT_DEV }}
+      CASKEY5_USERNAME: ${{ secrets.CASKEY5_USERNAME }}
+      CASKEY5_PASSWORD: ${{ secrets.CASKEY5_PASSWORD }}
+      CASKEY5_HOST: ${{ secrets.CASKEY5_HOST }}
+
+    steps:
+          
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Checkout branch
+        uses: actions/checkout@v2
+        with:
+          ref: dm-test-dispatch
+
+      - name: Install requirements and run model script
+        id: experiment_main
+        run: |
+          python train.py
+
+      - name: Invoke workflow in dssquad-app
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: Deploy app
+          repo: Data-Science-Squad/dssquad-app
+          token: ${{ secrets.ACCESS_TOKEN }}
+          ref: dm-test
