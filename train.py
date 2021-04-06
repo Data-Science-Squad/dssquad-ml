@@ -6,7 +6,6 @@
 
 import numpy as np
 import pandas as pd
-import pymysql
 from sqlalchemy import create_engine
 from datetime import datetime, timedelta
 from sklearn.metrics import mean_squared_error
