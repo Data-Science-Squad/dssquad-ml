@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - develop
+      - github-action
 
 jobs:
   compare-experiments:
