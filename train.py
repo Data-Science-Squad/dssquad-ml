@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[34]:
+# ## Libraries
+
+# In[ ]:
 
 
 import numpy as np
@@ -13,35 +15,50 @@ import pmdarima as pm
 import os
 
 
-# In[53]:
+# ## Database connection
+
+# In[8]:
 
 
-user = os.environ.get('DB_USER')
-password = os.environ.get('DB_PWD')
-db = os.environ.get('DB_DB')
-host = os.environ.get('DB_HOST')
+def db_connect():
+    user = os.environ.get('DB_USER')
+    password = os.environ.get('DB_PWD')
+    db = os.environ.get('DB_DB')
+    host = os.environ.get('DB_HOST')
+    sqlEngine = create_engine('mysql+pymysql://{}:{}@{}:3306/{}'.format(user,password,host,db), pool_recycle=3600)
+    connection = sqlEngine.connect()
+    return(connection)
 
 
-# In[71]:
+# ## Get data
+
+# In[32]:
 
 
-sqlEngine = create_engine('mysql+pymysql://{}:{}@{}:3306/{}'.format(user,password,host,db), pool_recycle=3600)
-connection = sqlEngine.connect()
+def get_df():
+    connection = db_connect()
+    df_query = "SELECT incident_date, council_district, police_district, neighborhood FROM full_incidents WHERE incident_date >= '2020-01-01'"
+    df = pd.read_sql_query(df_query,connection) 
+    connection.close()
+    return(df)
 
-df = pd.read_sql_query('SELECT incident_date, council_district, police_district, neighborhood FROM full_incidents',connection)
-df = df[df.incident_date >= '2020-01-01']
-
-connection.close()
+print("Getting data")
+df = get_df()
 
 
-# In[38]:
+# ## Create Dataframes for predictions and performance metrics
+
+# In[33]:
 
 
+print("Creating prediction and performance Dataframes")
 prediction = pd.DataFrame(columns=['location', 'level', 'frequency', 'start_date', 'end_date', 'pred', 'lower', 'upper'])
 performance = pd.DataFrame(columns=['entity', 'level', 'frequency', 'RMSE'])
 
 
-# In[8]:
+# ## Modeling functions
+
+# In[22]:
 
 
 def insert_into_df(label, level, index, FORECAST, rmse, conf_int):
@@ -67,7 +84,7 @@ def insert_into_df(label, level, index, FORECAST, rmse, conf_int):
     performance = performance.append({'entity':label, 'level':level, 'frequency':frequency, 'RMSE':rmse}, ignore_index=True)
 
 
-# In[10]:
+# In[23]:
 
 
 def predict(data, index):
@@ -77,7 +94,7 @@ def predict(data, index):
     return FORECAST, conf_int
 
 
-# In[11]:
+# In[24]:
 
 
 def validate_model(data):
@@ -90,7 +107,7 @@ def validate_model(data):
     return rmse
 
 
-# In[12]:
+# In[25]:
 
 
 def daily(data, label, level):
@@ -100,7 +117,7 @@ def daily(data, label, level):
     insert_into_df(label, level, index, FORECAST, rmse, conf_int)
 
 
-# In[13]:
+# In[26]:
 
 
 def weekly(data, label, level):
@@ -111,7 +128,7 @@ def weekly(data, label, level):
     insert_into_df(label, level, index_w, FORECAST_w, rmse_w, conf_int)
 
 
-# In[14]:
+# In[27]:
 
 
 def monthly(data, label, level):
@@ -122,10 +139,15 @@ def monthly(data, label, level):
     insert_into_df(label, level, index_m, FORECAST_m, rmse_m, conf_int)
 
 
-# In[50]:
+# ## Train, forecast, and measure model performance
 
+# In[36]:
+
+
+print("Training, forecasting, and measuring...")
 
 levels = ['council_district', 'police_district', 'neighborhood']
+
 for i in range(3):
     df_level = df.iloc[:,[0,i+1]]
     df_level = pd.DataFrame({'no_of_incidents' : df_level.groupby( [ df[levels[i]], df_level['incident_date'].dt.date] ).size()}).reset_index()
@@ -147,14 +169,18 @@ for i in range(3):
             continue
 
 
-# In[72]:
+# ## Write outputs
+
+# In[34]:
 
 
-sqlEngine = create_engine('mysql+pymysql://{}:{}@{}:3306/{}'.format(user,password,host,db), pool_recycle=3600)
-connection = sqlEngine.connect()
+def write_to_db(df, table_name):
+    connection = db_connect()
+    df.to_sql(table_name, con=connection, if_exists='replace', index=False)
+    connection.close()
+    return None
 
-performance.to_sql('performance', con=connection, if_exists='replace', index=False)
-prediction.to_sql('predictions', con=connection, if_exists='replace', index=False)
-
-connection.close()
+print("Writing outputs")
+write_to_db(df=performance, table_name="performance")
+write_to_db(df=prediction, table_name="prediction")
 
